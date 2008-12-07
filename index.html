@@ -1,0 +1,13 @@
+<html>
+  <body>
+    <h1>lminimumcover</h1>
+    <p>This is a simple web app built on top of Google App Engine that takes as input a set of functional dependencies, and returns a calculated L-minimum cover to this set.</p>
+    <p>Enter your set in the form field, in the syntax illustrated below:</p>
+    <pre>{A->X,B->X,A->B,B->A,A->E,B->E,D->E,E->D,E->H,EF->G,I->Y,I->E,LMIO->K,BLMIO->P}</pre>
+    <form action="/result" method="post">
+      <textarea rows="5" cols="80" name="fds"></textarea><br />
+      <input type="submit" value="Submit" />
+    </form>
+    <p>The code for this app is available from <a href="http://code.google.com/p/lminimumcover/">http://code.google.com/p/lminimumcover/</a>.</p>
+  </body>
+</html>
