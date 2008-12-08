@@ -32,15 +32,18 @@ class MainHandler(webapp.RequestHandler):
 
 class ResultHandler(webapp.RequestHandler):
   def post(self):
-    F = FDset()
-    fds = self.request.get('fds').strip('{}').split(',')
-    for fd in fds:
-      left,right = fd.split('->')
-      #right = fd.split('->')[1]
-      F.add(FD(AttributeSet(left),AttributeSet(right)))
-    G = F.LMinimumSet()
-    path = os.path.join(os.path.dirname(__file__), 'result.html')
-    self.response.out.write(template.render(path, {'originalset':F, 'lminimumset':G}))
+    if self.request.get('fds'):
+      F = FDset()
+      fds = self.request.get('fds').strip('{}').split(',')
+      for fd in fds:
+        left,right = fd.split('->')
+        F.add(FD(AttributeSet(left),AttributeSet(right)))
+      G = F.LMinimumSet()
+      path = os.path.join(os.path.dirname(__file__), 'result.html')
+      self.response.out.write(template.render(path, {'originalset':F, 'lminimumset':G}))
+    else:
+      logging.error("IP adress %s attempted to access ResultHandler without sending fds data."%self.request.remote_addr)
+      self.redirect("/")
 
 def main():
   application = webapp.WSGIApplication([('/', MainHandler),
