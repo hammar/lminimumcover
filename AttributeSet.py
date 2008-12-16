@@ -8,7 +8,9 @@ class AttributeSet(set):
 	"""
 	
 	def __str__(self):
-		return "".join(self)
+		sortedSelf = list(self)
+		sortedSelf.sort()
+		return "".join(sortedSelf)
 	
 	def closure(self,fdset):
 		"""
