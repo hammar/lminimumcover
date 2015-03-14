@@ -1,0 +1,1 @@
+A simple web app built on top of Google App Engine that takes as input a set of functional dependencies, and returns a calculated L-minimum cover to this set.
