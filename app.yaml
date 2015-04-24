@@ -1,8 +1,15 @@
-application: lminimumcover
+application: lminimumcover-hrd
 version: 3
-runtime: python
+runtime: python27
+threadsafe: true
 api_version: 1
 
 handlers:
 - url: .*
-  script: main.py
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: 2.5.2
+- name: jinja2
+  version: 2.6

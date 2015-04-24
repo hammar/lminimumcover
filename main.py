@@ -18,19 +18,28 @@ import logging
 import os
 import wsgiref.handlers
 
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template
+#from google.appengine.ext import webapp
+#from google.appengine.ext.webapp import template
+import jinja2
+import webapp2
 
 from AttributeSet import AttributeSet
 from FD import FD
 from FDset import FDset
 
-class MainHandler(webapp.RequestHandler):
-  def get(self):
-    path = os.path.join(os.path.dirname(__file__), 'index.html')
-    self.response.out.write(template.render(path, {}))
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
-class ResultHandler(webapp.RequestHandler):
+class MainHandler(webapp2.RequestHandler):
+  def get(self):
+    template = JINJA_ENVIRONMENT.get_template('index.html')
+    self.response.out.write(template.render())
+    #path = os.path.join(os.path.dirname(__file__), 'index.html')
+    #self.response.out.write(template.render(path, {}))
+
+class ResultHandler(webapp2.RequestHandler):
   def post(self):
     if self.request.get('fds'):
       F = FDset()
@@ -39,17 +48,22 @@ class ResultHandler(webapp.RequestHandler):
         left,right = fd.split('->')
         F.add(FD(AttributeSet(left),AttributeSet(right)))
       G = F.LMinimumSet()
-      path = os.path.join(os.path.dirname(__file__), 'result.html')
-      self.response.out.write(template.render(path, {'originalset':F, 'lminimumset':G}))
+      #path = os.path.join(os.path.dirname(__file__), 'result.html')
+      template_values = {'originalset':F, 'lminimumset':G}
+      template = JINJA_ENVIRONMENT.get_template('result.html')
+      self.response.out.write(template.render(template_values))
     else:
       logging.error("IP adress %s attempted to access ResultHandler without sending fds data."%self.request.remote_addr)
       self.redirect("/")
 
-def main():
-  application = webapp.WSGIApplication([('/', MainHandler),
-                                        ('/result', ResultHandler)],
-                                       debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
+app = webapp2.WSGIApplication([('/', MainHandler),('/result', ResultHandler)])
 
-if __name__ == '__main__':
-  main()
+#def main():
+#  application = webapp.WSGIApplication([('/', MainHandler),
+#                                        ('/result', ResultHandler)],
+#                                       debug=True)
+#  wsgiref.handlers.CGIHandler().run(application)
+#
+#if __name__ == '__main__':
+#  main()
+#
